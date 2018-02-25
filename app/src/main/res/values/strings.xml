@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Simple Twitter</string>
+    <string name="login_label">Log in</string>
+    <string name="intent_scheme">oauth</string>
+    <string name="intent_host">codepathtweets</string>
+    <string name="title_activity_main">Twitter</string>
+    <string name="title_activity_login">Twitter Login</string>
+
+    <string name="tweet">TWEET</string>
+    <string name="new_tweet">New Tweet</string>
+    <string name="what_in_ur_mind">What is in your mind!</string>
+    <string name="tweet_length">Tweet must be at least 5 characters long.</string>
+    <string name="logout">Logout</string>
+
+</resources>
