@@ -40,8 +40,21 @@
             android:id="@+id/tweet_adapter_tv_text"
             android:autoLink="web"
             android:textColor="#000"
+            android:layout_marginBottom="5dp"
             android:text="To run the RMI application, you need to pack your project into two jar files. The first jar file includes the classes to run in client machine. And second Jar file, including the classes to run in server machine."/>
 
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/tweet_adapter_img_tweet"
+            android:visibility="gone"/>
+
+        <VideoView
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:id="@+id/tweet_adapter_video_tweet"
+            android:layout_gravity="center_horizontal"
+            android:visibility="gone"/>
 
     </LinearLayout>
 

@@ -24,8 +24,8 @@ import com.loopj.android.http.RequestParams;
 public class RestClient extends OAuthBaseClient {
 	public static final BaseApi REST_API_INSTANCE = TwitterApi.instance(); // Change this
 	public static final String REST_URL = "https://api.twitter.com/1.1"; // Change this, base API URL
-	public static final String REST_CONSUMER_KEY = "PyLC9xhJi7HOoWQt7mBLAXNBu";       // Change this
-	public static final String REST_CONSUMER_SECRET = "NkeOOVNIdave7jRlRXG9PUf3DQ3qUhhMXcvi7sJexOVTZ1uuZ2"; // Change this
+	public static final String REST_CONSUMER_KEY = "wLDyAwWZwYQJJONMYonfwYc0g";       // Change this
+	public static final String REST_CONSUMER_SECRET = "yV1bynDnPF13PXa4dWUidsJOj8U9pTIx49RRK37TDEPZsjgghC"; // Change this
 
 	// Landing page to indicate the OAuth flow worked in case Chrome for Android 25+ blocks navigation back to the app.
 	public static final String FALLBACK_URL = "https://codepath.github.io/android-rest-client-template/success.html";
@@ -64,6 +64,7 @@ public class RestClient extends OAuthBaseClient {
 		String apiUrl = getApiUrl("statuses/home_timeline.json");
 		RequestParams params = new RequestParams();
 		params.put("page", String.valueOf(page));
+		params.put("count", 10);
 		getClient().get(apiUrl, params, handler);
 	}
 

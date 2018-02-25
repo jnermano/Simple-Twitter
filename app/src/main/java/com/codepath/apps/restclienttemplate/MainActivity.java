@@ -1,5 +1,7 @@
 package com.codepath.apps.restclienttemplate;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentManager;
@@ -105,6 +107,31 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         loadTweets(1);
 
+        // Get intent, action and MIME type
+        Intent intent = getIntent();
+        String action = intent.getAction();
+        String type = intent.getType();
+
+        if (Intent.ACTION_SEND.equals(action) && type != null) {
+            if ("text/plain".equals(type)) {
+
+                // Make sure to check whether returned data will be null.
+                String titleOfPage = intent.getStringExtra(Intent.EXTRA_SUBJECT);
+                String urlOfPage = intent.getStringExtra(Intent.EXTRA_TEXT);
+                Uri imageUriOfPage = (Uri) intent.getParcelableExtra(Intent.EXTRA_STREAM);
+
+                showDialogNewTweet(getString(R.string.new_tweet), urlOfPage);
+
+            }
+        }
+
+    }
+
+    private void showDialogNewTweet(String title, String tweet) {
+        FragmentManager fm = getSupportFragmentManager();
+        FragmentNewTweet fragmentNewTweet = FragmentNewTweet.newInstance(title, tweet);
+        fragmentNewTweet.setCancelable(false);
+        fragmentNewTweet.show(fm, "tweet fragment");
     }
 
     private void loadTweets(final int page) {
@@ -168,10 +195,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.fab:
-                FragmentManager fm = getSupportFragmentManager();
-                FragmentNewTweet fragmentNewTweet = FragmentNewTweet.newInstance();
-                fragmentNewTweet.setCancelable(false);
-                fragmentNewTweet.show(fm, "tweet fragment");
+                showDialogNewTweet(getString(R.string.new_tweet), null);
                 break;
         }
     }

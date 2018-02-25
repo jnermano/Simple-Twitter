@@ -32,6 +32,12 @@ public class Tweet extends BaseModel {
     String text;
 
     @Column
+    String tweet_media_url;
+
+    @Column
+    String tweet_media_type;
+
+    @Column
     Long user_id;
     @Column
     String user_name;
@@ -53,6 +59,25 @@ public class Tweet extends BaseModel {
             this.id = object.getLong("id");
             this.created_at = object.getString("created_at");
             this.text = object.getString("text");
+
+            if (!object.isNull("extended_entities")) {
+                JSONObject entitiesObject = object.getJSONObject("extended_entities");
+                JSONArray mediaArray = entitiesObject.getJSONArray("media");
+                if (mediaArray.length() > 0) {
+                    JSONObject mediaObject = mediaArray.getJSONObject(0);
+                    this.tweet_media_url = mediaObject.getString("media_url_https");
+                    this.tweet_media_type = mediaObject.getString("type");
+                    if (this.tweet_media_type.equals("video")) {
+                        JSONObject video_info = mediaObject.getJSONObject("video_info");
+                        JSONArray variantsArray = video_info.getJSONArray("variants");
+                        if (variantsArray.length() > 0) {
+                            this.tweet_media_url = variantsArray.getJSONObject(0).getString("url");
+                        }
+                    }
+                }
+            }
+
+
 
             JSONObject userJson = object.getJSONObject("user");
 
@@ -149,5 +174,21 @@ public class Tweet extends BaseModel {
 
     public void setType_tweet(int type_tweet) {
         this.type_tweet = type_tweet;
+    }
+
+    public String getTweet_media_url() {
+        return tweet_media_url;
+    }
+
+    public void setTweet_media_url(String tweet_media_url) {
+        this.tweet_media_url = tweet_media_url;
+    }
+
+    public String getTweet_media_type() {
+        return tweet_media_type;
+    }
+
+    public void setTweet_media_type(String tweet_media_type) {
+        this.tweet_media_type = tweet_media_type;
     }
 }

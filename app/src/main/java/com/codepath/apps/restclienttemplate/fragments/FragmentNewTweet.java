@@ -1,10 +1,12 @@
 package com.codepath.apps.restclienttemplate.fragments;
 
+import android.content.DialogInterface;
 import android.graphics.Color;
 import android.graphics.Point;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
+import android.support.v7.app.AlertDialog;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -22,12 +24,16 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.codepath.apps.restclienttemplate.R;
+import com.codepath.apps.restclienttemplate.models.Tweet;
+import com.codepath.apps.restclienttemplate.models.Tweet_Table;
 import com.codepath.apps.restclienttemplate.rest.RestApplication;
 import com.codepath.apps.restclienttemplate.rest.RestClient;
 import com.loopj.android.http.JsonHttpResponseHandler;
+import com.raizlabs.android.dbflow.sql.language.SQLite;
 
 import org.json.JSONObject;
 
+import java.util.List;
 import java.util.Locale;
 
 import butterknife.BindView;
@@ -40,6 +46,8 @@ import cz.msebera.android.httpclient.Header;
  */
 
 public class FragmentNewTweet extends DialogFragment implements View.OnClickListener, TextWatcher {
+
+    Tweet tweet;
 
     public interface FragmentNewTweetListener {
         void onSubmitTweet(String tweet);
@@ -67,13 +75,17 @@ public class FragmentNewTweet extends DialogFragment implements View.OnClickList
     TextView tv_remains_char;
 
     private static final int TWEET_LENGTH = 140;
-    private static final String TITLE = "TITLE";
+    private static final String TITLE = "TITLE", MSG = "MSG";
 
     public FragmentNewTweet() {
     }
 
-    public static FragmentNewTweet newInstance() {
+    public static FragmentNewTweet newInstance(String title, String msg) {
         FragmentNewTweet fragmentNewTweet = new FragmentNewTweet();
+        Bundle bundle = new Bundle();
+        bundle.putString(TITLE, title);
+        bundle.putString(MSG, msg);
+        fragmentNewTweet.setArguments(bundle);
         return fragmentNewTweet;
     }
 
@@ -95,7 +107,7 @@ public class FragmentNewTweet extends DialogFragment implements View.OnClickList
 
         tv_remains_char.setText(String.format(Locale.US, "%d", (TWEET_LENGTH)));
 
-        getDialog().setTitle(getString(R.string.new_tweet));
+
 
         RestClient client = RestApplication.getRestClient();
         client.getAuthUser(new JsonHttpResponseHandler() {
@@ -120,6 +132,23 @@ public class FragmentNewTweet extends DialogFragment implements View.OnClickList
             }
         });
 
+        List<Tweet> tweets = SQLite.select()
+                .from(Tweet.class)
+                .where(Tweet_Table.type_tweet.eq(1))
+                .queryList();
+
+        if (tweets.size() > 0){
+            tweet = tweets.get(0);
+            edt_tweet.setText(tweet.getText());
+        }
+
+
+        getDialog().setTitle(getArguments().getString(TITLE)); //getString(R.string.new_tweet)
+        String msg = getArguments().getString(MSG);
+        if (msg != null)
+            edt_tweet.setText(msg);
+
+
     }
 
     private void setValues() {
@@ -130,6 +159,10 @@ public class FragmentNewTweet extends DialogFragment implements View.OnClickList
 
         FragmentNewTweetListener listener = (FragmentNewTweetListener) getActivity();
         listener.onSubmitTweet(edt_tweet.getText().toString());
+
+        if (tweet != null)
+            tweet.delete();
+
         dismiss();
     }
 
@@ -139,7 +172,37 @@ public class FragmentNewTweet extends DialogFragment implements View.OnClickList
         switch (view.getId()) {
 
             case R.id.frag_new_tweet_btn_cancel:
-                dismiss();
+                AlertDialog alertDialog = new AlertDialog.Builder(getContext()).create();
+                alertDialog.setTitle("Confirmation");
+                alertDialog.setIcon(R.drawable.ic_warning_black_24dp);
+                alertDialog.setMessage("Do you want to save your tweet for later?");
+                alertDialog.setButton(DialogInterface.BUTTON_NEGATIVE, (CharSequence) "Discard", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        if (tweet != null)
+                            tweet.delete();
+                        dismiss();
+                    }
+                });
+                alertDialog.setButton(DialogInterface.BUTTON_POSITIVE, (CharSequence) "Save for later", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        if (edt_tweet.getText().toString().length() >= 5){
+                            if (tweet == null){
+                                tweet = new Tweet();
+                                tweet.setId(11L);
+                                tweet.setType_tweet(1);
+                            }
+                            tweet.setText(edt_tweet.getText().toString());
+                            tweet.save();
+                            dismiss();
+                        }else {
+                            edt_tweet.setError(getString(R.string.tweet_length));
+                        }
+
+                    }
+                });
+                alertDialog.show();
                 break;
 
             case R.id.frag_new_tweet_btn_tweet:

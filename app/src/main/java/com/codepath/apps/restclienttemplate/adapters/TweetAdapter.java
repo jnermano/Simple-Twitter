@@ -1,12 +1,16 @@
 package com.codepath.apps.restclienttemplate.adapters;
 
 import android.content.Context;
+import android.media.MediaPlayer;
+import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.MediaController;
 import android.widget.TextView;
+import android.widget.VideoView;
 
 import com.bumptech.glide.Glide;
 import com.codepath.apps.restclienttemplate.R;
@@ -51,7 +55,7 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder> 
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
+    public void onBindViewHolder(final ViewHolder holder, int position) {
         Tweet tweet = tweets.get(position);
 
         holder.tv_user_name.setText(
@@ -71,6 +75,44 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder> 
                 .bitmapTransform(new RoundedCornersTransformation(getContext(), 30, 10))
                 .bitmapTransform(new CropCircleTransformation(getContext()))
                 .into(holder.img_user);
+
+
+
+        if (tweet.getTweet_media_type() != null && tweet.getTweet_media_url() != null) {
+
+            if (tweet.getTweet_media_type().equals("video")) {
+
+                holder.video_tweet.setVisibility(View.VISIBLE);
+                Uri vidUri = Uri.parse(tweet.getTweet_media_url());
+                holder.video_tweet.setVideoURI(vidUri);
+                holder.video_tweet.setBackgroundResource(R.drawable.tw__ic_tweet_photo_error_light);
+
+                MediaController vidControl = new MediaController(getContext());
+                vidControl.setAnchorView(holder.video_tweet);
+                vidControl.setVisibility(View.GONE);
+                holder.video_tweet.setMediaController(vidControl);
+                holder.video_tweet.requestFocus();
+                holder.video_tweet.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+                    @Override
+                    public void onPrepared(MediaPlayer mediaPlayer) {
+                        holder.video_tweet.start();
+                    }
+                });
+
+                holder.video_tweet.start();
+
+            }else {
+                holder.img_tweet.setVisibility(View.VISIBLE);
+                Glide.with(getContext())
+                        .load(tweet.getTweet_media_url())
+                        .into(holder.img_tweet);
+            }
+
+        }else {
+            holder.img_tweet.setVisibility(View.GONE);
+            holder.video_tweet.setVisibility(View.GONE);
+        }
+
     }
 
     @Override
@@ -97,6 +139,15 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder> 
 
         @BindView(R.id.tweet_adapter_tv_text)
         TextView tv_text;
+
+        @BindView(R.id.tweet_adapter_img_tweet)
+        ImageView img_tweet;
+
+
+        @BindView(R.id.tweet_adapter_video_tweet)
+        VideoView video_tweet;
+
+
 
 
         public ViewHolder(View itemView) {
