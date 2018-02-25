@@ -30,7 +30,6 @@ import com.raizlabs.android.dbflow.sql.language.SQLite;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -281,7 +280,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
      * @return
      */
     public boolean isOnline() {
-        Runtime runtime = Runtime.getRuntime();
+        return true;
+        /*Runtime runtime = Runtime.getRuntime();
         try {
             Process ipProcess = runtime.exec("/system/bin/ping -c 1 8.8.8.8");
             int exitValue = ipProcess.waitFor();
@@ -291,6 +291,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        return false;
+        return false;*/
     }
 }
