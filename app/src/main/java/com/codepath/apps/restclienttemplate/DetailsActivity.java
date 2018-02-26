@@ -165,7 +165,17 @@ public class DetailsActivity extends AppCompatActivity
                 try {
 
                     final Tweet mTweet = new Tweet(response);
-                    finish();
+                    DetailsActivity.this.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Snackbar.make(ll_tweet, R.string.success_tweet, Snackbar.LENGTH_LONG)
+                                    .show();
+                            edt_tweet.setText(String.format(Locale.US, "@%s", tweet.getUser_screen_name()));
+                        }
+                    });
+
+
+                    //finish();
 
                 } catch (Exception e) {
                     e.printStackTrace();
