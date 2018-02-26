@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context="com.codepath.apps.restclienttemplate.DetailsActivity"
+    tools:showIn="@layout/activity_details"
+    android:padding="10dp"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:orientation="vertical">
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:id="@+id/tweet_details_img_user"
+                android:src="@drawable/ic_person_black_64dp"
+                android:layout_gravity="top"
+                android:layout_margin="5dp"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="5dp">
+
+                <TextView
+
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/tweet_details_tv_name"
+                    android:textColor="#000"
+                    android:text="@string/app_name"/>
+
+                <TextView
+
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/tweet_details_tv_screen_name"
+                    android:text="@string/app_name"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/tweet_details_tv_time"
+                    android:text="8h"/>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/tweet_details_tv_text"
+            android:autoLink="web"
+            android:textColor="#000"
+            android:layout_marginBottom="5dp"
+            android:text="@string/app_name"/>
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/tweet_details_img_tweet"
+            android:visibility="gone"/>
+
+        <VideoView
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:id="@+id/tweet_details_video_tweet"
+            android:layout_gravity="center_horizontal"
+            android:visibility="gone"/>
+
+
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_alignParentBottom="true">
+
+        <EditText
+            android:id="@+id/tweet_details_edt_tweet"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/what_in_ur_mind"
+            android:inputType="text|textMultiLine|textCapSentences"
+            android:maxLength="140" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:orientation="horizontal"
+            android:visibility="gone"
+            android:id="@+id/tweet_details_ll_tweet">
+
+            <TextView
+                android:id="@+id/tweet_details_tv_remains_char"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:text="@string/app_name" />
+
+            <Button
+                android:id="@+id/tweet_details_btn_tweet"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@android:color/white"
+                android:background="@drawable/selector_btn_normal"
+                android:layout_marginLeft="10dp"
+                android:text="@string/tweet" />
+
+        </LinearLayout>
+
+
+    </LinearLayout>
+
+
+</RelativeLayout>

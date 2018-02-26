@@ -82,6 +82,8 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder> 
 
             if (tweet.getTweet_media_type().equals("video")) {
 
+                holder.img_tweet.setVisibility(View.GONE);
+
                 holder.video_tweet.setVisibility(View.VISIBLE);
                 Uri vidUri = Uri.parse(tweet.getTweet_media_url());
                 holder.video_tweet.setVideoURI(vidUri);
@@ -102,6 +104,9 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder> 
                 holder.video_tweet.start();
 
             }else {
+
+                holder.video_tweet.setVisibility(View.GONE);
+
                 holder.img_tweet.setVisibility(View.VISIBLE);
                 Glide.with(getContext())
                         .load(tweet.getTweet_media_url())
@@ -118,6 +123,10 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder> 
     @Override
     public int getItemCount() {
         return tweets.size();
+    }
+
+    public Tweet getItem(int position){
+        return tweets.get(position);
     }
 
     // Easy access to the context object in the recyclerview

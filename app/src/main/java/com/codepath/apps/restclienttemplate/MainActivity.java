@@ -29,6 +29,7 @@ import com.raizlabs.android.dbflow.sql.language.SQLite;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.parceler.Parcels;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -92,7 +93,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         ItemClickSupport.addTo(rvTweets).setOnItemClickListener(new ItemClickSupport.OnItemClickListener() {
             @Override
             public void onItemClicked(RecyclerView recyclerView, int position, View v) {
-
+                Intent intent = new Intent(MainActivity.this, DetailsActivity.class);
+                intent.putExtra("TWEET", Parcels.wrap(adapter.getItem(position)));
+                startActivity(intent);
             }
         });
 
