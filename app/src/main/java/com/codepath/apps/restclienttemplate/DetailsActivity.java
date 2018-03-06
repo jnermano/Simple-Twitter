@@ -99,15 +99,15 @@ public class DetailsActivity extends AppCompatActivity
         if (tweet == null)
             finish();
 
-        tv_name.setText(tweet.getUser_name());
-        tv_screen_name.setText(String.format(Locale.US, "@%s", tweet.getUser_screen_name()));
-        tv_text.setText(tweet.getText());
+        tv_name.setText(tweet.getUser().getName());
+        tv_screen_name.setText(String.format(Locale.US, "@%s", tweet.getUser().getScreen_name()));
+        tv_text.setText(tweet.getBody());
         tv_time.setText(ParseRelativeDate.getRelativeTimeAgo(tweet.getCreated_at()));
 
-        edt_tweet.setText(String.format(Locale.US, "@%s", tweet.getUser_screen_name()));
+        edt_tweet.setText(String.format(Locale.US, "@%s", tweet.getUser().getScreen_name()));
 
         Glide.with(this)
-                .load(tweet.getUser_profile_image_url_https())
+                .load(tweet.getUser().getProfile_imageURL())
                 .placeholder(R.drawable.tw__ic_tweet_photo_error_light)
                 .error(R.drawable.tw__ic_tweet_photo_error_light)
                 .bitmapTransform(new RoundedCornersTransformation(this, 30, 10))
@@ -115,12 +115,12 @@ public class DetailsActivity extends AppCompatActivity
                 .into(img_user);
 
 
-        if (tweet.getTweet_media_type() != null && tweet.getTweet_media_url() != null) {
+        if (tweet.getEntities() != null && tweet.getEntities().getMedia() != null) {
 
-            if (tweet.getTweet_media_type().equals("video")) {
+            if (tweet.getEntities().getMedia().getMedia_type().equals("video")) {
 
                 video_tweet.setVisibility(View.VISIBLE);
-                Uri vidUri = Uri.parse(tweet.getTweet_media_url());
+                Uri vidUri = Uri.parse(tweet.getEntities().getMedia().getVideo_url());
                 video_tweet.setVideoURI(vidUri);
                 video_tweet.setBackgroundResource(R.drawable.tw__ic_tweet_photo_error_light);
 
@@ -141,11 +141,13 @@ public class DetailsActivity extends AppCompatActivity
             } else {
                 img_tweet.setVisibility(View.VISIBLE);
                 Glide.with(this)
-                        .load(tweet.getTweet_media_url())
+                        .load(tweet.getEntities().getMedia().getMedia_url())
                         .into(img_tweet);
             }
 
         }
+
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
 
     }
@@ -164,13 +166,13 @@ public class DetailsActivity extends AppCompatActivity
 
                 try {
 
-                    final Tweet mTweet = new Tweet(response);
+                    final Tweet mTweet = Tweet.fromJSON(response);
                     DetailsActivity.this.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
                             Snackbar.make(ll_tweet, R.string.success_tweet, Snackbar.LENGTH_LONG)
                                     .show();
-                            edt_tweet.setText(String.format(Locale.US, "@%s", tweet.getUser_screen_name()));
+                            edt_tweet.setText(String.format(Locale.US, "@%s", tweet.getUser().getScreen_name()));
                         }
                     });
 
@@ -211,7 +213,7 @@ public class DetailsActivity extends AppCompatActivity
     @Override
     public void afterTextChanged(Editable editable) {
 
-        ll_tweet.setVisibility(editable.length() > (tweet.getUser_screen_name().length() + 1) ? View.VISIBLE : View.GONE);
+        ll_tweet.setVisibility(editable.length() > (tweet.getUser().getScreen_name().length() + 1) ? View.VISIBLE : View.GONE);
 
         int remain_char = TWEET_LENGTH - editable.length();
 

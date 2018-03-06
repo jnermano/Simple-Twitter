@@ -2,13 +2,14 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="horizontal">
 
     <ImageView
         android:layout_width="60dp"
         android:layout_height="60dp"
         android:id="@+id/tweet_adapter_img_user"
-        android:src="@drawable/ic_person_black_64dp"
+        app:srcCompat="@drawable/ic_person_black_64dp"
         android:layout_gravity="top"
         android:layout_margin="5dp"/>
     <LinearLayout

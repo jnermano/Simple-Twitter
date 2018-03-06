@@ -139,7 +139,7 @@ public class FragmentNewTweet extends DialogFragment implements View.OnClickList
 
         if (tweets.size() > 0){
             tweet = tweets.get(0);
-            edt_tweet.setText(tweet.getText());
+            edt_tweet.setText(tweet.getBody());
         }
 
 
@@ -190,10 +190,10 @@ public class FragmentNewTweet extends DialogFragment implements View.OnClickList
                         if (edt_tweet.getText().toString().length() >= 5){
                             if (tweet == null){
                                 tweet = new Tweet();
-                                tweet.setId(11L);
+                                tweet.settweet_id(11L);
                                 tweet.setType_tweet(1);
                             }
-                            tweet.setText(edt_tweet.getText().toString());
+                            tweet.setBody(edt_tweet.getText().toString());
                             tweet.save();
                             dismiss();
                         }else {

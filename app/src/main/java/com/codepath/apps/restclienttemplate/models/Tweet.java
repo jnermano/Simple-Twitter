@@ -1,171 +1,133 @@
 package com.codepath.apps.restclienttemplate.models;
 
-/**
- * Created by Ermano
- * on 2/24/2018.
- */
+import android.os.Parcel;
+import android.os.Parcelable;
+import android.util.Log;
 
 import com.codepath.apps.restclienttemplate.database.MyDatabase;
+import com.codepath.apps.restclienttemplate.utils.ParseRelativeDate;
 import com.raizlabs.android.dbflow.annotation.Column;
+import com.raizlabs.android.dbflow.annotation.ForeignKey;
 import com.raizlabs.android.dbflow.annotation.PrimaryKey;
 import com.raizlabs.android.dbflow.annotation.Table;
+import com.raizlabs.android.dbflow.sql.language.Select;
 import com.raizlabs.android.dbflow.structure.BaseModel;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.parceler.Parcel;
 
 import java.util.ArrayList;
+import java.util.List;
 
+/**
+ * Created by Ermano
+ * on 3/3/2018.
+ */
 
 @Table(database = MyDatabase.class)
-@Parcel(analyze={Tweet.class})
-public class Tweet extends BaseModel {
-    // Define database columns and associated fields
-    @PrimaryKey
-    @Column
-    Long id;
+@org.parceler.Parcel(analyze={Tweet.class})
+public class Tweet extends BaseModel implements Parcelable
+{
     @Column
     String created_at;
-    @Column
-    String text;
 
     @Column
-    String tweet_media_url;
+    @PrimaryKey
+    Long tweet_id;
 
     @Column
-    String tweet_media_type;
+    String body;
 
     @Column
-    Long user_id;
+    @ForeignKey(saveForeignKeyModel = true)
+    User user;
+
+
     @Column
-    String user_name;
+    @ForeignKey(saveForeignKeyModel = true)
+    Entities entities;
+
     @Column
-    String user_screen_name;
+    int reply_count;
+
     @Column
-    String user_profile_image_url_https;
+    int retweet_count;
+
+    @Column
+    int favorite_count;
+
+    @Column
+    boolean retweeted;
+
+    @Column
+    boolean favorited;
 
     @Column
     int type_tweet;
 
-    public Tweet(){}
-
-    // Add a constructor that creates an object from the JSON response
-    public Tweet(JSONObject object){
-        super();
-
-        try {
-            this.id = object.getLong("id");
-            this.created_at = object.getString("created_at");
-            this.text = object.getString("text");
-
-            if (!object.isNull("extended_entities")) {
-                JSONObject entitiesObject = object.getJSONObject("extended_entities");
-                JSONArray mediaArray = entitiesObject.getJSONArray("media");
-                if (mediaArray.length() > 0) {
-                    JSONObject mediaObject = mediaArray.getJSONObject(0);
-                    this.tweet_media_url = mediaObject.getString("media_url_https");
-                    this.tweet_media_type = mediaObject.getString("type");
-                    if (this.tweet_media_type.equals("video")) {
-                        JSONObject video_info = mediaObject.getJSONObject("video_info");
-                        JSONArray variantsArray = video_info.getJSONArray("variants");
-                        if (variantsArray.length() > 0) {
-                            this.tweet_media_url = variantsArray.getJSONObject(0).getString("url");
-                        }
-                    }
-                }
-            }
-
-
-
-            JSONObject userJson = object.getJSONObject("user");
-
-            this.user_id = userJson.getLong("id");
-            this.user_name = userJson.getString("name");
-            this.user_screen_name = userJson.getString("screen_name");
-            this.user_profile_image_url_https = userJson.getString("profile_image_url_https");
-
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+    public boolean isRetweeted() {
+        return retweeted;
     }
 
-    public static ArrayList<Tweet> fromJson(JSONArray jsonArray) {
-        ArrayList<Tweet> tweets = new ArrayList<Tweet>(jsonArray.length());
-
-        for (int i=0; i < jsonArray.length(); i++) {
-            JSONObject tweetJson = null;
-            try {
-                tweetJson = jsonArray.getJSONObject(i);
-            } catch (Exception e) {
-                e.printStackTrace();
-                continue;
-            }
-
-            Tweet tweet = new Tweet(tweetJson);
-            tweet.setType_tweet(0);
-            tweet.save();
-            tweets.add(tweet);
-        }
-
-        return tweets;
+    public void setRetweeted(boolean retweeted) {
+        this.retweeted = retweeted;
     }
 
-    public Long getId() {
-        return id;
+    public boolean isFavorited() {
+        return favorited;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setFavorited(boolean favorited) {
+        this.favorited = favorited;
     }
 
-    public String getCreated_at() {
-        return created_at;
+    public int getReply_count() {
+        return reply_count;
     }
+
+    public void setReply_count(int reply_count) {
+        this.reply_count = reply_count;
+    }
+
+    public int getRetweet_count() {
+        return retweet_count;
+    }
+
+    public void setRetweet_count(int retweet_count) {
+        this.retweet_count = retweet_count;
+    }
+
+    public int getFavorite_count() {
+        return favorite_count;
+    }
+
+    public void setFavorite_count(int favorite_count) {
+        this.favorite_count = favorite_count;
+    }
+
 
     public void setCreated_at(String created_at) {
         this.created_at = created_at;
     }
 
-    public String getText() {
-        return text;
+    public void settweet_id(Long uid) {
+        this.tweet_id = uid;
     }
 
-    public void setText(String text) {
-        this.text = text;
+    public void setBody(String body) {
+        this.body = body;
     }
 
-    public Long getUser_id() {
-        return user_id;
+    public void setUser(User user) {
+        this.user = user;
+    }
+    public Entities getEntities() {
+        return entities;
     }
 
-    public void setUser_id(Long user_id) {
-        this.user_id = user_id;
-    }
-
-    public String getUser_name() {
-        return user_name;
-    }
-
-    public void setUser_name(String user_name) {
-        this.user_name = user_name;
-    }
-
-    public String getUser_screen_name() {
-        return user_screen_name;
-    }
-
-    public void setUser_screen_name(String user_screen_name) {
-        this.user_screen_name = user_screen_name;
-    }
-
-    public String getUser_profile_image_url_https() {
-        return user_profile_image_url_https;
-    }
-
-    public void setUser_profile_image_url_https(String user_profile_image_url_https) {
-        this.user_profile_image_url_https = user_profile_image_url_https;
+    public void setEntities(Entities entities) {
+        this.entities = entities;
     }
 
     public int getType_tweet() {
@@ -176,19 +138,133 @@ public class Tweet extends BaseModel {
         this.type_tweet = type_tweet;
     }
 
-    public String getTweet_media_url() {
-        return tweet_media_url;
+    public Tweet() {
     }
 
-    public void setTweet_media_url(String tweet_media_url) {
-        this.tweet_media_url = tweet_media_url;
+    public Tweet(Parcel in) {
+        this.created_at = in.readString();
+        this.tweet_id = in.readLong();
+        this.body = in.readString();
+        this.user = in.readParcelable(User.class.getClassLoader());
+        this.entities = in.readParcelable(Entities.class.getClassLoader());
+        this.reply_count = in.readInt();
+        this.retweet_count = in.readInt();
+        this.favorite_count = in.readInt();
+
+        this.retweeted = in.readByte() != 0;
+        this.favorited = in.readByte() != 0;
     }
 
-    public String getTweet_media_type() {
-        return tweet_media_type;
+    public static final Creator<Tweet> CREATOR = new Creator<Tweet>() {
+        @Override
+        public Tweet createFromParcel(Parcel in) {
+            return new Tweet(in);
+        }
+
+        @Override
+        public Tweet[] newArray(int size) {
+            return new Tweet[size];
+        }
+    };
+
+    public String getCreated_at() {
+        return created_at;
     }
 
-    public void setTweet_media_type(String tweet_media_type) {
-        this.tweet_media_type = tweet_media_type;
+    public Long gettweet_id() {
+        return tweet_id;
+    }
+
+    public String getBody() {
+        return body;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public static Tweet fromJSON(JSONObject object) throws JSONException {
+        Tweet tweet = new Tweet();
+
+       // Log.i(TimelineActivity.TAG,"Inside Tweet class "+object.getString("created_at"));
+        tweet.created_at = ParseRelativeDate.getRelativeTimeAgo(object.getString("created_at"));
+        tweet.tweet_id = object.getLong("id");
+        tweet.body = object.getString("text");
+        tweet.user =  User.fromJSON(object.getJSONObject("user"));
+        if(object.has("extended_entities")) {
+            JSONObject extended_entities = object.getJSONObject("extended_entities");
+            Log.i("Tweet Model","Media exists "+tweet.user.getScreen_name());
+            if (extended_entities != null) {
+                tweet.entities = Entities.fromJSON(extended_entities, tweet.tweet_id);
+            } else {
+                tweet.entities = null;
+            }
+        }
+        else{
+            tweet.entities = null;
+        }
+
+        if(object.has("reply_count")) {
+            tweet.reply_count = object.getInt("reply_count");
+        }
+        else
+            tweet.reply_count = 0;
+        if(object.has("retweet_count")) {
+            tweet.retweet_count = object.getInt("retweet_count");
+        }
+        else
+            tweet.retweet_count = 0;
+
+
+        if(object.has("favorite_count")) {
+            tweet.favorite_count = object.getInt("favorite_count");
+        }
+        else
+            tweet.favorite_count = 0;
+
+        tweet.retweeted = object.getBoolean("retweeted");
+        tweet.favorited = object.getBoolean("favorited");
+
+        return tweet;
+    }
+
+
+    public static ArrayList<Tweet> getTweets(JSONArray array){
+        ArrayList<Tweet> list = new ArrayList<>();
+
+        for(int i=0;i<array.length();i++){
+            try {
+                Tweet tweet = Tweet.fromJSON(array.getJSONObject(i));
+                list.add(tweet);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return list;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeString(created_at);
+        parcel.writeLong(tweet_id);
+        parcel.writeString(body);
+        parcel.writeParcelable(user,i);
+        parcel.writeParcelable(entities,i);
+        parcel.writeInt(reply_count);
+        parcel.writeInt(retweet_count);
+        parcel.writeInt(favorite_count);
+        parcel.writeByte((byte) (retweeted ? 1 : 0));
+        parcel.writeByte((byte) (favorited ? 1 : 0));
+    }
+
+
+   public static List<Tweet> loadRecentItemsfromDB(){
+        return new Select().from(Tweet.class).orderBy(Tweet_Table.tweet_id,false).limit(100).queryList();
     }
 }

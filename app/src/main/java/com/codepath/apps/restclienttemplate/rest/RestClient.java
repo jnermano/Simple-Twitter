@@ -68,6 +68,13 @@ public class RestClient extends OAuthBaseClient {
 		getClient().get(apiUrl, params, handler);
 	}
 
+	public void getMetionsTimeline(int page, AsyncHttpResponseHandler handler) {
+		String apiUrl = getApiUrl("statuses/mentions_timeline.json");
+		RequestParams params = new RequestParams();
+		params.put("count", 10);
+		getClient().get(apiUrl, params, handler);
+	}
+
 	public void postTweet(String body, AsyncHttpResponseHandler handler) {
 		String apiUrl = getApiUrl("statuses/update.json");
 		RequestParams params = new RequestParams();
@@ -81,4 +88,23 @@ public class RestClient extends OAuthBaseClient {
 		//params.put("status", body);
 		getClient().get(apiUrl, params, handler);
 	}
+
+	public void getUserTimeline(int page, String screen_name, AsyncHttpResponseHandler handler) {
+		String apiUrl = getApiUrl("statuses/user_timeline.json");
+		RequestParams params = new RequestParams();
+		params.put("page", String.valueOf(page));
+		params.put("screen_name", screen_name);
+		params.put("count", 10);
+		getClient().get(apiUrl, params, handler);
+	}
+
+    public void getUserFavorites(int page, String screen_name, AsyncHttpResponseHandler handler) {
+        String apiUrl = getApiUrl("favorites/list.json");
+        RequestParams params = new RequestParams();
+        params.put("page", String.valueOf(page));
+        params.put("screen_name", screen_name);
+        params.put("include_entities", false);
+        params.put("count", 10);
+        getClient().get(apiUrl, params, handler);
+    }
 }

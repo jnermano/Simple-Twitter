@@ -1,6 +1,7 @@
 package com.codepath.apps.restclienttemplate.adapters;
 
 import android.content.Context;
+import android.content.Intent;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
@@ -13,10 +14,13 @@ import android.widget.TextView;
 import android.widget.VideoView;
 
 import com.bumptech.glide.Glide;
+import com.codepath.apps.restclienttemplate.ProfileActivity;
 import com.codepath.apps.restclienttemplate.R;
 import com.codepath.apps.restclienttemplate.models.Tweet;
 import com.codepath.apps.restclienttemplate.utils.MyUtils;
 import com.codepath.apps.restclienttemplate.utils.ParseRelativeDate;
+
+import org.parceler.Parcels;
 
 import java.util.List;
 import java.util.Locale;
@@ -56,20 +60,20 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder> 
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
-        Tweet tweet = tweets.get(position);
+        final Tweet tweet = tweets.get(position);
 
         holder.tv_user_name.setText(
                 MyUtils.fromHtml(
-                        String.format(Locale.US, "<b>%s</b>\n@%s", tweet.getUser_name(), tweet.getUser_screen_name())
+                        String.format(Locale.US, "<b>%s</b>\n@%s", tweet.getUser().getName(), tweet.getUser().getScreen_name())
                 )
         );
 
         holder.tv_create_at.setText(ParseRelativeDate.getRelativeTimeAgo(tweet.getCreated_at()));
 
-        holder.tv_text.setText(tweet.getText());
+        holder.tv_text.setText(tweet.getBody());
 
         Glide.with(getContext())
-                .load(tweet.getUser_profile_image_url_https())
+                .load(tweet.getUser().getProfile_imageURL())
                 .placeholder(R.drawable.tw__ic_tweet_photo_error_light)
                 .error(R.drawable.tw__ic_tweet_photo_error_light)
                 .bitmapTransform(new RoundedCornersTransformation(getContext(), 30, 10))
@@ -78,14 +82,14 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder> 
 
 
 
-        if (tweet.getTweet_media_type() != null && tweet.getTweet_media_url() != null) {
+        if (tweet.getEntities() != null && tweet.getEntities().getMedia() != null) {
 
-            if (tweet.getTweet_media_type().equals("video")) {
+            if (tweet.getEntities().getMedia().getMedia_type().equals("video")) {
 
                 holder.img_tweet.setVisibility(View.GONE);
 
                 holder.video_tweet.setVisibility(View.VISIBLE);
-                Uri vidUri = Uri.parse(tweet.getTweet_media_url());
+                Uri vidUri = Uri.parse(tweet.getEntities().getMedia().getVideo_url());
                 holder.video_tweet.setVideoURI(vidUri);
                 holder.video_tweet.setBackgroundResource(R.drawable.tw__ic_tweet_photo_error_light);
 
@@ -109,7 +113,7 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder> 
 
                 holder.img_tweet.setVisibility(View.VISIBLE);
                 Glide.with(getContext())
-                        .load(tweet.getTweet_media_url())
+                        .load(tweet.getEntities().getMedia().getMedia_url())
                         .into(holder.img_tweet);
             }
 
@@ -117,6 +121,15 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder> 
             holder.img_tweet.setVisibility(View.GONE);
             holder.video_tweet.setVisibility(View.GONE);
         }
+
+        holder.img_user.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getContext(), ProfileActivity.class);
+                intent.putExtra("USER", Parcels.wrap(tweet.getUser()));
+                getContext().startActivity(intent);
+            }
+        });
 
     }
 
@@ -162,6 +175,7 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder> 
         public ViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
+
         }
     }
 }
